@@ -1,53 +1,53 @@
 import type { Request, Response } from "express";
+import {addressSchema} from "../schema/wallet.schema.js";
 import {
   getBalance,
   getNewAddress,
-  getUTXOs
+  getUTXOs,
+  validateAddress
 } from "../bitcoin/wallet.js";
 
 export async function balance(
   req: Request,
   res: Response
 ) {
-  try {
     const balance = await getBalance();
 
     res.json({ balance });
-  } catch (error) {
-    res.status(500).json({
-      error: "Failed to get wallet balance"
-    });
-  }
+
 }
 
 export async function newAddress(
   req: Request,
   res: Response
 ) {
-  try {
+ 
     const address = await getNewAddress();
 
     res.json({ address });
-  } catch (error) {
-    res.status(500).json({
-      error: "Failed to generate address"
-    });
-  }
 }
 
 export async function utxos(
   req: Request,
   res: Response
 ) {
-  try {
+  
     const data = await getUTXOs();
 
     res.json({
       utxos: data
     });
-  } catch (error) {
-    res.status(500).json({
-      error: "Failed to get wallet UTXOs"
+  
+}
+
+export async function validate(
+  req: Request,
+  res: Response
+) {
+    const data = addressSchema.parse(req.body);
+    const result  = await validateAddress (data.address);
+
+    res.json({
+      result
     });
-  }
 }
