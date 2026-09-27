@@ -2,7 +2,8 @@ import type { Request, Response } from "express";
 
 import {
   getTransaction,
-  sendBitcoin
+  sendBitcoin,
+    getTransactionHistory
 } from "../bitcoin/transactions.js";
 
 import { sendBitcoinSchema, getTransactionSchema} from "../schema/transaction.schema.js";
@@ -43,5 +44,16 @@ export async function send(
 
   res.json({
     txid
+  });
+}
+
+export async function history(
+  req: Request,
+  res: Response
+) {
+  const transactions = await getTransactionHistory();
+
+  res.json({
+    transactions
   });
 }
