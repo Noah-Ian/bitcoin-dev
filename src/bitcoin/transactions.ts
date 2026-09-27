@@ -28,3 +28,11 @@ export async function sendBitcoin(
     wallet
   );
 }
+
+export async function getTransactionHistory() {
+  return bitcoinRpc(
+    "listtransactions",
+    ["*", 100],
+    wallet
+  );
+}
