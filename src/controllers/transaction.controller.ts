@@ -1,4 +1,7 @@
 import type { Request, Response } from "express";
+import { z } from "zod";
+import { sendBitcoinSchema } from "../schema/transaction.schema.js";
+import { validateAddress } from "../bitcoin/wallet.js";
 import {
   getTransaction,
   sendBitcoin
@@ -35,32 +38,34 @@ export async function send(
   res: Response
 ) {
   try {
-    const { address, amount } = req.body;
+    const data = sendBitcoinSchema.parse(req.body);
 
-    if (!address) {
-      return res.status(400).json({
-        error: "Address is required"
-      });
-    }
+    const validation = await validateAddress(
+      data.address
+    );
 
-    if (
-      typeof amount !== "number" ||
-      amount <= 0
-    ) {
+    if (!validation.isvalid) {
       return res.status(400).json({
-        error: "Amount must be a positive number"
+        error: "Invalid Bitcoin address"
       });
     }
 
     const txid = await sendBitcoin(
-      address,
-      amount
+      data.address,
+      data.amount
     );
 
     res.json({
       txid
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: error.issues
+      });
+    }
+
     res.status(500).json({
       error: "Failed to send Bitcoin"
     });

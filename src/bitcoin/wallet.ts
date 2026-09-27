@@ -15,3 +15,10 @@ export async function getNewAddress() {
 export async function getUTXOs() {
     return bitcoinRpc("listunspent", [], wallet);
 }
+
+export async function validateAddress(address: string) {
+  return bitcoinRpc(
+    "validateaddress",
+    [address]
+  );
+}
