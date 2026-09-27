@@ -2,6 +2,7 @@ import express from 'express';
 import walletRoutes from './routes/wallet.route.js';
 import transactionRoutes from "./routes/transaction.route.js";
 import blockchainRoutes from "./routes/blockchain.route.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
@@ -12,5 +13,7 @@ app.use('/wallet', walletRoutes);
 app.use('/transaction', transactionRoutes);
 
 app.use('/blockchain', blockchainRoutes);
+
+app.use(errorHandler);
 
 export default app;
