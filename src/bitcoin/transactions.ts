@@ -36,3 +36,12 @@ export async function getTransactionHistory() {
     wallet
   );
 }
+
+export async function estimateFee(
+  blocks: number = 6
+) {
+  return bitcoinRpc(
+    "estimatesmartfee",
+    [blocks]
+  );
+}

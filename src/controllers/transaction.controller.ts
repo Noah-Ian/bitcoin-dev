@@ -3,7 +3,8 @@ import type { Request, Response } from "express";
 import {
   getTransaction,
   sendBitcoin,
-    getTransactionHistory
+    getTransactionHistory,
+    estimateFee
 } from "../bitcoin/transactions.js";
 
 import { sendBitcoinSchema, getTransactionSchema} from "../schema/transaction.schema.js";
@@ -32,7 +33,7 @@ export async function send(
   const validation = await validateAddress(data.address);
 
   if (!validation.isvalid) {
-    res.status(400).json({
+    return res.status(400).json({
       error: "Invalid Bitcoin address"
     });
   }
@@ -55,5 +56,19 @@ export async function history(
 
   res.json({
     transactions
+  });
+}
+
+export async function feeEstimate(
+  req: Request,
+  res: Response
+) {
+  const blocks = Number(req.query.blocks) || 6;
+
+  const fee = await estimateFee(blocks);
+
+  res.json({
+    targetBlocks: blocks,
+    fee
   });
 }
