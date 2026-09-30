@@ -1,3 +1,4 @@
 /node_modules
 .env
 src/lnd/admin.macaroon
+src/lnd/tls.cert

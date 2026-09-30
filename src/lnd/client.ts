@@ -43,7 +43,14 @@ const macaroonCreds = grpc.credentials.createFromMetadataGenerator(
   }
 );
 
-const sslCreds = grpc.credentials.createSsl();
+const TLS_CERT_PATH = path.join(
+  process.cwd(),
+  "src/lnd/tls.cert"
+);
+
+const tlsCert = fs.readFileSync(TLS_CERT_PATH);
+
+const sslCreds = grpc.credentials.createSsl(tlsCert);
 
 const credentials = grpc.credentials.combineChannelCredentials(
   sslCreds,
